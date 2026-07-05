@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch: {}
 
+# 给 GITHUB_TOKEN 写权限以便创建 Release / 上传资产
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -75,6 +79,7 @@ jobs:
           release_name: Build ${{ github.run_number }}
           draft: false
           prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release asset (only if exe exists)
         if: steps.check_exe.outputs.exe_exists == 'true'
