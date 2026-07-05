@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   workflow_dispatch: {}
 
-# 给 GITHUB_TOKEN 写权限以便创建 Release / 上传资产
+# 允许 GITHUB_TOKEN 有写权限（创建 Release / 上传资产）
 permissions:
   contents: write
 
@@ -74,16 +74,19 @@ jobs:
         if: steps.check_exe.outputs.exe_exists == 'true'
         id: create_release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ github.run_id }}
           release_name: Build ${{ github.run_number }}
           draft: false
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release asset (only if exe exists)
         if: steps.check_exe.outputs.exe_exists == 'true'
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist\\claim_bot.exe
